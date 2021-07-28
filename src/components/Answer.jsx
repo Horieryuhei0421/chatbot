@@ -9,7 +9,14 @@ const useStyles = makeStyles((theme) => ({
 const Answer = (props) => {
   // const classes = useStyles();
 
-  return <Button variant="contained">{props.content}</Button>;
+  return (
+    <Button
+      variant="contained"
+      onClick={() => props.select(props.content, props.nextId)}
+    >
+      {props.content}
+    </Button>
+  );
 };
 
 export default Answer;
