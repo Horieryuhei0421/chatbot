@@ -2,7 +2,7 @@ import React from "react";
 import defaultDataset from "./dataset";
 import { style } from "@material-ui/system";
 import "./assets/styles/style.css";
-import { AnswersList } from "./components";
+import { AnswersList, Chats } from "./components";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,26 +14,57 @@ export default class App extends React.Component {
       dataset: defaultDataset,
       open: false,
     };
+    this.selectAnswer = this.selectAnswer.bind(this);
   }
 
-  initAnswer = () => {
-    const initDataset = this.state.dataset[this.state.currentId];
-    const initAnswers = initDataset.answers;
-
+  displayNextQuestion = (nextQuestionID) => {
+    const chats = this.state.chats;
+    chats.push({
+      text: this.state.dataset[nextQuestionID].question,
+      type: "question",
+    });
     this.setState({
-      answers: initAnswers,
+      answers: this.state.dataset[nextQuestionID].answers,
+      chats: chats,
+      currentId: nextQuestionID,
     });
   };
 
+  selectAnswer = (selectedAnswer, nextQuestionID) => {
+    switch (true) {
+      case nextQuestionID === "init":
+        this.displayNextQuestion(nextQuestionID);
+        break;
+      default:
+        const chats = this.state.chats;
+        chats.push({
+          text: selectedAnswer,
+          type: "answer",
+        });
+
+        this.setState({
+          chats: chats,
+        });
+
+        this.displayNextQuestion(nextQuestionID);
+        break;
+    }
+  };
+
   componentDidMount() {
-    this.initAnswer();
+    const initAnswer = "";
+    this.selectAnswer(initAnswer, this.state.currentId);
   }
 
   render() {
     return (
       <section className="c-section">
         <div className="c-box">
-          <AnswersList answers={this.state.answers} />
+          <Chats chats={this.state.chats} />
+          <AnswersList
+            answers={this.state.answers}
+            select={this.selectAnswer}
+          />
         </div>
       </section>
     );
