@@ -2,7 +2,7 @@ import React from "react";
 import defaultDataset from "./dataset";
 import { style } from "@material-ui/system";
 import "./assets/styles/style.css";
-import { AnswersList, Chats } from "./components";
+import { AnswersList, Chats, FormsDialog } from "./components";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -15,6 +15,8 @@ export default class App extends React.Component {
       open: false,
     };
     this.selectAnswer = this.selectAnswer.bind(this);
+    this.handleClickOpen = this.handleClickOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   displayNextQuestion = (nextQuestionID) => {
@@ -34,6 +36,9 @@ export default class App extends React.Component {
     switch (true) {
       case nextQuestionID === "init":
         setTimeout(() => this.displayNextQuestion(nextQuestionID), 500);
+        break;
+      case nextQuestionID === "contact":
+        this.handleClickOpen();
         break;
       case /^https:*/.test(nextQuestionID):
         const a = document.createElement("a");
@@ -57,6 +62,14 @@ export default class App extends React.Component {
     }
   };
 
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
   componentDidMount() {
     const initAnswer = "";
     this.selectAnswer(initAnswer, this.state.currentId);
@@ -78,6 +91,7 @@ export default class App extends React.Component {
             answers={this.state.answers}
             select={this.selectAnswer}
           />
+          <FormsDialog open={this.state.open} handleClose={this.handleClose} />
         </div>
       </section>
     );
